@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 from sklearn.metrics import accuracy_score, recall_score
+from sklearn.metrics import mean_squared_error 
 app = Flask(__name__,template_folder='/Users/Violine/Desktop/FINAL/FINAL/PREDICTIVE MAINTAINENCE FLASK/Templates')
 model = keras.models.load_model('/Users/Violine/Desktop/FINAL/FINAL/PREDICTIVE MAINTAINENCE FLASK/hi.h5')
 
@@ -88,12 +89,9 @@ def predict_lstm():
     else:
         # Render the predictlstm.html template for GET requests
         return render_template('predictlstm.html')
-if __name__ == '__main__':
-    app.run(debug=True)
-
-model = keras.models.load_model('/Users/Violine/Desktop/FINAL/FINAL/PREDICTIVE MAINTAINENCE FLASK/model2.h5')
 
 
+model1 = keras.models.load_model('/Users/Violine/Desktop/FINAL/FINAL/PREDICTIVE MAINTAINENCE FLASK/model2.h5')
 
 @app.route('/predictautoencoder', methods=['GET', 'POST'])
 def predict_autoencoder():
@@ -106,7 +104,7 @@ def predict_autoencoder():
         x_test = np.load(file)
 
         #use the model to make predictions on the test data
-        ypred = model.predict(x_test)
+        ypred = model1.predict(x_test)
 
         #Calculate the MSE for all sequences and predictions
         import statistics
@@ -115,11 +113,20 @@ def predict_autoencoder():
         pred_mse = []   # calculated mse for test data
         pred_res = []   # result: 0 normal, 1 anomaly
 
+        np.nan_to_num(x_test,copy=True)
+        np.nan_to_num(ypred,copy=True)
+        
+
         for i in range(len(x_test)):
-            pred_mse.append(mean_squared_error(ypred[i,:,:], x_test[i,:,:]))
+            try:
+                pred_mse.append(mean_squared_error(ypred[i,:,:], x_test[i,:,:]))
+            except:
+                pred_mse.append(1)
+
+        
 
         for mse in pred_mse:
-            if (mse<=0.005):
+            if (mse<=0.003825):
                 pred_res.append(0)
             else:
                 pred_res.append(1)             
@@ -130,4 +137,6 @@ def predict_autoencoder():
     else:
         # Render the predictlstm.html template for GET requests
         return render_template('predictautoencoder.html')
-    
+
+if __name__ == '__main__':
+    app.run(debug=True)
