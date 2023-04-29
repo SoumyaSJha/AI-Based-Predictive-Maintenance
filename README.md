@@ -9,6 +9,6 @@ Build deep learning models based on Long Short Term Memory (LSTM) network to pre
 
 ## Dataset Used
 Backblaze. "Hard Drive Failure Rates." Backblaze, https://www.backblaze.com/b2/hard-drive-test-data.html#downloading-the-raw-hard-drive-test-data (accessed November 23, 2022)
-========
+
 Built a deep learning model using a long short-term memory (LSTM) network, and create an autoencoder that detects anomalies for predictive maintenance.
 
